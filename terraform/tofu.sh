@@ -13,5 +13,5 @@ else
   exit 1
 fi
 
-# Pass EVERYTHING to terraform
-exec terraform "$@"
+# Pass EVERYTHING to tofu
+exec tofu "$@"
