@@ -36,8 +36,10 @@
       caddy = { name, nodes, pkgs, ... }: {
         deployment = {
           targetHost = "10.60.60.10";
-          # targetUser defaults to the local username running colmena
-          # targetUser = "alex";
+          targetUser = builtins.getEnv "USER";
+
+          # You can build on the target machine
+          # buildOnTarget = true;
         };
         imports = caddyModules;
       };
