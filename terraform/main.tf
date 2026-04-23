@@ -20,11 +20,13 @@ resource "proxmox_vm_qemu" "vm1" {
   target_node = "pve"
   clone       = "template-deb13"
   full_clone  = true
+  tags        = "nixos;dmz"
 
   agent    = 1
   os_type   = "l26"
   scsihw   = "virtio-scsi-single"
   vm_state = "running"
+  onboot   = true
 
   cpu {
     cores   = 2
@@ -70,11 +72,13 @@ resource "proxmox_vm_qemu" "vm2" {
   target_node = "pve"
   clone       = "template-deb13"
   full_clone  = true
+  tags        = "nixos;dmz"
 
   agent    = 1
   os_type   = "l26"
   scsihw   = "virtio-scsi-single"
   vm_state = "running"
+  onboot   = true
 
   cpu {
     cores   = 2
@@ -120,11 +124,13 @@ resource "proxmox_vm_qemu" "vm3" {
   target_node = "pve"
   clone       = "template-deb13"
   full_clone  = true
+  tags        = "nixos;dmz"
 
   agent    = 1
   os_type   = "l26"
   scsihw   = "virtio-scsi-single"
   vm_state = "running"
+  onboot   = true
 
   cpu {
     cores   = 2
