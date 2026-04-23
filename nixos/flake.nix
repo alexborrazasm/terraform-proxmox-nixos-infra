@@ -19,7 +19,7 @@
       ./hosts/caddy/default.nix
     ];
   in {
-    # nixos-anywhere: nix run github:nix-community/nixos-anywhere -- --flake .#caddy <use>@<host>
+    # nixos-anywhere
     nixosConfigurations.caddy = nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = { inherit disko inputs; };
@@ -36,7 +36,8 @@
       caddy = { name, nodes, pkgs, ... }: {
         deployment = {
           targetHost = "10.60.60.10";
-          targetUser = "alex";
+          # targetUser defaults to the local username running colmena
+          # targetUser = "alex";
         };
         imports = caddyModules;
       };
