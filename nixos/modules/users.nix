@@ -17,7 +17,7 @@
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBkMYwuNdqWYMYnW/xb5cqJWmn+0+vkwfJ7iLJjtAag0 alexborrazasm@gmail.com"
       ];
     };
-    nario = {
+    choped = {
       isNormalUser = true;
       extraGroups = [
         "wheel"   # sudo
