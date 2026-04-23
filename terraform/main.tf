@@ -14,22 +14,152 @@ provider "proxmox" {
   pm_tls_insecure     = var.pm_tls_insecure
 }
 
-# TODO
 resource "proxmox_vm_qemu" "vm1" {
-  vmid        = 201
-  name        = "vm-test-1"
+  vmid        = 110
+  name        = "nixos-caddy"
   target_node = "pve"
+  clone       = "template-deb13"
+  full_clone  = true
 
-  clone = "test"
+  agent    = 1
+  os_type   = "l26"
+  scsihw   = "virtio-scsi-single"
+  vm_state = "running"
 
   cpu {
-    cores = 2
+    cores   = 2
+    sockets = 1
+    type    = "host"
   }
+
   memory = 2048
 
-  network {
-    id     = local.networks.dmz.id
-    model  = "virtio"
-    bridge = local.networks.dmz.bridge
+  disks {
+    scsi {
+      scsi0 {
+        disk {
+          storage  = "local-lvm"
+          size     = "20G"
+          iothread = true
+        }
+      }
+      scsi1 {
+        cloudinit {
+          storage = "local-lvm"
+        }
+      }
+    }
   }
+
+  network {
+    id     = 0
+    model  = "virtio"
+    bridge = "vmbr2"
+  }
+
+  # Cloud-init
+  ipconfig0  = "ip=10.60.60.10/24,gw=10.60.60.1"
+  nameserver = "10.60.60.1"
+
+  ciupgrade = false
+}
+
+resource "proxmox_vm_qemu" "vm2" {
+  vmid        = 111
+  name        = "nixos-host1"
+  target_node = "pve"
+  clone       = "template-deb13"
+  full_clone  = true
+
+  agent    = 1
+  os_type   = "l26"
+  scsihw   = "virtio-scsi-single"
+  vm_state = "running"
+
+  cpu {
+    cores   = 2
+    sockets = 1
+    type    = "host"
+  }
+
+  memory = 2048
+
+  disks {
+    scsi {
+      scsi0 {
+        disk {
+          storage  = "local-lvm"
+          size     = "20G"
+          iothread = true
+        }
+      }
+      scsi1 {
+        cloudinit {
+          storage = "local-lvm"
+        }
+      }
+    }
+  }
+
+  network {
+    id     = 0
+    model  = "virtio"
+    bridge = "vmbr2"
+  }
+
+  # Cloud-init
+  ipconfig0  = "ip=10.60.60.11/24,gw=10.60.60.1"
+  nameserver = "10.60.60.1"
+
+  ciupgrade = false
+}
+
+resource "proxmox_vm_qemu" "vm3" {
+  vmid        = 112
+  name        = "nixos-host2"
+  target_node = "pve"
+  clone       = "template-deb13"
+  full_clone  = true
+
+  agent    = 1
+  os_type   = "l26"
+  scsihw   = "virtio-scsi-single"
+  vm_state = "running"
+
+  cpu {
+    cores   = 2
+    sockets = 1
+    type    = "host"
+  }
+
+  memory = 2048
+
+  disks {
+    scsi {
+      scsi0 {
+        disk {
+          storage  = "local-lvm"
+          size     = "20G"
+          iothread = true
+        }
+      }
+      scsi1 {
+        cloudinit {
+          storage = "local-lvm"
+        }
+      }
+    }
+  }
+
+  network {
+    id     = 0
+    model  = "virtio"
+    bridge = "vmbr2"
+  }
+
+  # Cloud-init
+  ipconfig0  = "ip=10.60.60.12/24,gw=10.60.60.1"
+  nameserver = "10.60.60.1"
+
+  ciupgrade = false
 }
