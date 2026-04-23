@@ -99,6 +99,103 @@ manager to provide reproducible builds and declarative configuration. We use
 NixOS to define the configuration of our virtual machines, which allows us to 
 easily manage and version our system configuration.
 
+The NixOS configuration lives in the `nixos/` directory and is structured as a
+Nix flake. Each host has its own directory under `nixos/hosts/` with a
+`default.nix` (system config), `disk-config.nix` (partition layout via disko)
+and `hardware-configuration.nix` (kernel modules and platform). Shared config is
+split into reusable modules under `nixos/modules/`.
+
+## Initial deployment with nixos-anywhere
+
+[nixos-anywhere](https://github.com/nix-community/nixos-anywhere) installs NixOS
+on a remote machine over SSH from scratch, without needing a NixOS ISO. It works
+by booting the target into a temporary in-memory environment (kexec), partitioning
+the disk using [disko](https://github.com/nix-community/disko) according to our
+`disk-config.nix`, and then installing the full NixOS system defined in our flake.
+This lets us turn any Linux machine (including the Debian template created by
+OpenTofu) into a NixOS host with a single command.
+
+### Prepare a template
+
+Before the initial deployment, we need a Debian 13 VM with cloud-init support
+and SSH access. OpenTofu provisions this automatically. The template only needs:
+
+- SSH access with your public key
+- Nix installed (to generate the hardware configuration)
+
+### Install Nix on the template:
+```bash
+sh <(curl -L https://nixos.org/nix/install) --daemon
+```
+
+### Get hardware configuration:
+
+Connect to the template VM and run:
+```bash
+nix-shell -p nixos-install-tools --run "nixos-generate-config --no-filesystems --root /mnt"
+cat /mnt/etc/nixos/hardware-configuration.nix
+```
+
+Copy the output into `nixos/hosts/<host>/hardware-configuration.nix`. This file
+captures kernel modules specific to the VM hardware (QEMU guest, disk controllers, etc).
+
+Example:
+```nix
+{ config, lib, pkgs, modulesPath, ... }:
+{
+  imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
+
+  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "virtio_scsi" "sd_mod" "sr_mod" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
+  boot.extraModulePackages = [ ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+}
+```
+
+All VMs created from the same Proxmox template will share this hardware configuration.
+
+### Deploy NixOS:
+
+From the `nixos/` directory, run nixos-anywhere pointing at the target host:
+```bash
+cd nixos
+nix run github:nix-community/nixos-anywhere -- --flake .#caddy template@<template-ip> -i <path-to-your-ssh-key>
+```
+
+nixos-anywhere will partition the disk, install NixOS and reboot. After the reboot
+the machine is fully managed by NixOS and SSH access is available with the keys
+defined in `nixos/modules/users.nix`.
+
+> **Note:** After the reboot the host key of the machine changes (it is no longer
+> the Debian template, it is a fresh NixOS install). SSH will refuse to connect
+> with a host key mismatch error. Remove the old entry from your known hosts:
+> ```bash
+> ssh-keygen -R <host-ip>
+> ```
+
+## Subsequent deployments with Colmena
+
+After the initial nixos-anywhere installation, ongoing configuration changes are
+deployed using [Colmena](https://github.com/zhaofengli/colmena), a NixOS
+deployment tool that applies changes to running machines over SSH without
+reinstalling.
+
+```bash
+# Build without deploying
+nix run github:zhaofengli/colmena -- build
+
+# Deploy to all hosts
+nix run github:zhaofengli/colmena -- apply
+
+# Deploy to a specific host
+nix run github:zhaofengli/colmena -- apply --on <hostname>
+```
+
+Colmena reads the `colmena` output of the flake and deploys to the hosts defined
+there. The `targetHost` and `targetUser` for each host are set in `flake.nix`.
+
 # Docker
 
 [Docker](https://www.docker.com/) provides the ability to package and run an application in a loosely 

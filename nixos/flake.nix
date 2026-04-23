@@ -35,7 +35,7 @@
 
       caddy = { name, nodes, pkgs, ... }: {
         deployment = {
-          targetHost = "bricocloud.bricolabs.org";
+          targetHost = "10.60.60.10";
           targetUser = "alex";
         };
         imports = caddyModules;

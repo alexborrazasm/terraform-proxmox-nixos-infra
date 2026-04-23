@@ -18,6 +18,8 @@
     ../../modules/neovim.nix
   ];
   
+  nixpkgs.config.allowUnfree = true;
+
   # Set hostname
   networking.hostName = "caddy";
   

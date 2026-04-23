@@ -3,11 +3,7 @@
   lib,
   pkgs,
   ...
-}: let
-  docker-manager = pkgs.writeShellScriptBin "docker-manager" (
-    builtins.readFile ../scripts/docker-manager.sh
-  );
-in {
+}: {
   virtualisation.docker = {
     enable = true;
 
@@ -52,9 +48,6 @@ in {
   
   environment.shellAliases = {
     sd = "sudo -u docker -i";
-    dcm = "docker-manager";
   };
-
-  environment.systemPackages = [ docker-manager ];
 
 }
