@@ -196,6 +196,16 @@ nix run github:zhaofengli/colmena -- apply --on <hostname> --impure
 Colmena reads the `colmena` output of the flake and deploys to the hosts defined
 there. The `targetHost` and `targetUser` for each host are set in `flake.nix`.
 
+### SSH configuration for Colmena
+
+Add an entry for each host in your `~/.ssh/config` so Colmena can reach them
+using the correct key:
+
+```
+Host <host-ip>
+  IdentityFile ~/.ssh/<your-key>
+```
+
 # Docker
 
 [Docker](https://www.docker.com/) provides the ability to package and run an application in a loosely 
