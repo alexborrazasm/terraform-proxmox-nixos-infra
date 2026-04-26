@@ -23,7 +23,7 @@ resource "proxmox_vm_qemu" "vm1" {
   tags        = "nixos;dmz"
 
   agent    = 1
-  os_type   = "l26"
+  os_type  = "l26"
   scsihw   = "virtio-scsi-single"
   vm_state = "running"
   onboot   = true
@@ -75,7 +75,7 @@ resource "proxmox_vm_qemu" "vm2" {
   tags        = "nixos;dmz"
 
   agent    = 1
-  os_type   = "l26"
+  os_type  = "l26"
   scsihw   = "virtio-scsi-single"
   vm_state = "running"
   onboot   = true
@@ -127,7 +127,7 @@ resource "proxmox_vm_qemu" "vm3" {
   tags        = "nixos;dmz"
 
   agent    = 1
-  os_type   = "l26"
+  os_type  = "l26"
   scsihw   = "virtio-scsi-single"
   vm_state = "running"
   onboot   = true
@@ -165,6 +165,58 @@ resource "proxmox_vm_qemu" "vm3" {
 
   # Cloud-init
   ipconfig0  = "ip=10.60.60.12/24,gw=10.60.60.1"
+  nameserver = "10.60.60.1"
+
+  ciupgrade = false
+}
+
+resource "proxmox_vm_qemu" "vm4" {
+  vmid        = 113
+  name        = "nixos-host3"
+  target_node = "pve"
+  clone       = "template-deb13"
+  full_clone  = true
+  tags        = "nixos;dmz"
+
+  agent    = 1
+  os_type  = "l26"
+  scsihw   = "virtio-scsi-single"
+  vm_state = "running"
+  onboot   = true
+
+  cpu {
+    cores   = 2
+    sockets = 1
+    type    = "host"
+  }
+
+  memory = 2048
+
+  disks {
+    scsi {
+      scsi0 {
+        disk {
+          storage  = "local-lvm"
+          size     = "20G"
+          iothread = true
+        }
+      }
+      scsi1 {
+        cloudinit {
+          storage = "local-lvm"
+        }
+      }
+    }
+  }
+
+  network {
+    id     = 0
+    model  = "virtio"
+    bridge = "vmbr2"
+  }
+
+  # Cloud-init
+  ipconfig0  = "ip=10.60.60.13/24,gw=10.60.60.1"
   nameserver = "10.60.60.1"
 
   ciupgrade = false
