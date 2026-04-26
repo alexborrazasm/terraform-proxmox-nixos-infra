@@ -17,8 +17,6 @@
     ../../modules/docker.nix
     ../../modules/neovim.nix
   ];
-  
-  nixpkgs.config.allowUnfree = true;
 
   # Set hostname
   networking.hostName = "caddy";
@@ -52,6 +50,14 @@
     efiInstallAsRemovable = true;
   };
 
+  nix.settings = {
+    experimental-features = "nix-command flakes";
+    trusted-users = [ "@wheel" ];
+    max-jobs = "auto";
+    cores = 0;
+    auto-optimise-store = true;
+  };
+
   networking.firewall = {
     enable = true;
     #allowedTCPPorts = [ 80 443 ];
@@ -60,6 +66,31 @@
     #  { from = 8000; to = 8010; }
     #];
   };
+  
+  # Do garbage collection weekly to keep disk usage low
+  nix.gc = {
+    automatic = lib.mkDefault true;
+    dates = lib.mkDefault "weekly";
+    options = lib.mkDefault "--delete-older-than 7d";
+  };
+
+  services.journald.extraConfig = ''
+    SystemMaxUse=500M
+    RuntimeMaxUse=200M
+    MaxRetentionSec=14day
+  '';
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+
+  # Set your time zone
+  time.timeZone = "Europe/Madrid";
+  
+  # Select internationalization properties
+  i18n.defaultLocale = "en_US.UTF-8";
+  
+  # Configure console keymap
+  console.keyMap = "us";
 
   system.stateVersion = "25.11";
 }

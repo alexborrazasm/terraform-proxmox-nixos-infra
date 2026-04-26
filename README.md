@@ -187,14 +187,24 @@ reinstalling.
 nix run github:zhaofengli/colmena -- build
 
 # Deploy to all hosts
-nix run github:zhaofengli/colmena -- apply
+nix run github:zhaofengli/colmena -- apply --impure
 
 # Deploy to a specific host
-nix run github:zhaofengli/colmena -- apply --on <hostname>
+nix run github:zhaofengli/colmena -- apply --on <hostname> --impure
 ```
 
 Colmena reads the `colmena` output of the flake and deploys to the hosts defined
 there. The `targetHost` and `targetUser` for each host are set in `flake.nix`.
+
+### SSH configuration for Colmena
+
+Add an entry for each host in your `~/.ssh/config` so Colmena can reach them
+using the correct key:
+
+```
+Host <host-ip>
+  IdentityFile ~/.ssh/<your-key>
+```
 
 # Docker
 
