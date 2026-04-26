@@ -31,24 +31,39 @@
       ./hosts/host2
     ] ++ generalModules;
 
+    host3Modules = [
+      ./hosts/host3
+    ] ++ generalModules;
+
   in {
     # nixos-anywhere
-    nixosConfigurations.caddy = nixpkgs.lib.nixosSystem {
-      inherit system;
-      specialArgs = { inherit disko inputs; };
-      modules = caddyModules;
-    };
 
-    nixosConfigurations.host1 = nixpkgs.lib.nixosSystem {
-      inherit system;
-      specialArgs = { inherit disko inputs; };
-      modules = host1Modules;
-    };
+    nixosConfigurations = {
+      
+      caddy = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit disko inputs; };
+        modules = caddyModules;
+      };
 
-    nixosConfigurations.host2 = nixpkgs.lib.nixosSystem {
-      inherit system;
-      specialArgs = { inherit disko inputs; };
-      modules = host2Modules;
+      host1 = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit disko inputs; };
+        modules = host1Modules;
+      };
+
+      host2 = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit disko inputs; };
+        modules = host2Modules;
+      };
+
+      host3 = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit disko inputs; };
+        modules = host3Modules;
+      };
+
     };
 
     colmenaHive = colmena.lib.makeHive self.outputs.colmena;
@@ -71,16 +86,26 @@
 
       host1 = { name, nodes, pkgs, ...}: {
         deployment = {
-            targetHost = "10.60.60.11";
-          };
+          targetHost = "10.60.60.11";
+          targetUser = builtins.getEnv "USER";
+        };
         imports = host1Modules;
       };
 
       host2 = { name, nodes, pkgs, ...}: {
         deployment = {
-            targetHost = "10.60.60.12";
+          targetHost = "10.60.60.12";
+          targetUser = builtins.getEnv "USER";
         };
         imports = host2Modules;
+      };
+
+      host3 = { name, nodes, pkgs, ...}: {
+        deployment = {
+          targetHost = "10.60.60.13";
+          targetUser = builtins.getEnv "USER";
+        };
+        imports = host3Modules;  
       };
 
     };
