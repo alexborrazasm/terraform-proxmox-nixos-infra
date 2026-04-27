@@ -1,0 +1,22 @@
+{
+  admin 0.0.0.0:2019
+	servers {
+		metrics
+	}
+}
+
+*.mariolamasangeriz.net {
+	tls {
+		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	}
+
+	@test host test.mariolamasangeriz.net
+
+	handle @test {
+		respond "estoy bibo"
+	}
+
+	handle {
+		abort
+	}
+}

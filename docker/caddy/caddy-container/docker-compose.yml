@@ -1,0 +1,21 @@
+services:
+  caddy:
+    container_name: caddy
+    build:
+      dockerfile: Dockerfile
+    user: 1000:131
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2019:2019"
+    environment:
+      - TZ=Europe/Madrid
+    env_file:
+      - /run/agenix/cf-token
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - /srv/www:/srv
+      - ./caddy/data:/data
+      - ./caddy/config:/config
+      - ./caddy/log:/log
+    restart: unless-stopped
