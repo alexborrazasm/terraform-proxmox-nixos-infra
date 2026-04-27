@@ -221,3 +221,55 @@ resource "proxmox_vm_qemu" "vm4" {
 
   ciupgrade = false
 }
+
+resource "proxmox_vm_qemu" "vm5" {
+  vmid        = 114
+  name        = "nixos-monitorig"
+  target_node = "pve"
+  clone       = "template-deb13"
+  full_clone  = true
+  tags        = "nixos;monitoring;grafana;node_exporter;prometheus"
+
+  agent    = 1
+  os_type  = "l26"
+  scsihw   = "virtio-scsi-single"
+  vm_state = "running"
+  onboot   = true
+
+  cpu {
+    cores   = 2
+    sockets = 1
+    type    = "host"
+  }
+
+  memory = 2048
+
+  disks {
+    scsi {
+      scsi0 {
+        disk {
+          storage  = "local-lvm"
+          size     = "20G"
+          iothread = true
+        }
+      }
+      scsi1 {
+        cloudinit {
+          storage = "local-lvm"
+        }
+      }
+    }
+  }
+
+  network {
+    id     = 0
+    model  = "virtio"
+    bridge = "vmbr2"
+  }
+
+  # Cloud-init
+  ipconfig0  = "ip=10.60.60.14/24,gw=10.60.60.1"
+  nameserver = "10.60.60.1"
+
+  ciupgrade = false
+}
