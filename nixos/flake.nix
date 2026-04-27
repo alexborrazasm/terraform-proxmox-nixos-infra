@@ -23,16 +23,16 @@
       ./hosts/caddy
     ] ++ generalModules;
 
-    host1Modules = [
-      ./hosts/host1
+    worker1Modules = [
+      ./hosts/worker1
     ] ++ generalModules;
 
-    host2Modules = [
-      ./hosts/host2
+    worker2Modules = [
+      ./hosts/worker2
     ] ++ generalModules;
 
-    host3Modules = [
-      ./hosts/host3
+    worker3Modules = [
+      ./hosts/worker3
     ] ++ generalModules;
 
     monitoringModules = [
@@ -50,22 +50,22 @@
         modules = caddyModules;
       };
 
-      host1 = nixpkgs.lib.nixosSystem {
+      worker1 = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit disko inputs; };
-        modules = host1Modules;
+        modules = worker1Modules;
       };
 
-      host2 = nixpkgs.lib.nixosSystem {
+      worker2 = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit disko inputs; };
-        modules = host2Modules;
+        modules = worker2Modules;
       };
 
-      host3 = nixpkgs.lib.nixosSystem {
+      worker3 = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit disko inputs; };
-        modules = host3Modules;
+        modules = worker3Modules;
       };
 
       monitoring = nixpkgs.lib.nixosSystem {
@@ -94,28 +94,28 @@
         imports = caddyModules;
       };
 
-      host1 = { name, nodes, pkgs, ...}: {
+      worker1 = { name, nodes, pkgs, ...}: {
         deployment = {
           targetHost = "10.60.60.11";
           targetUser = builtins.getEnv "USER";
         };
-        imports = host1Modules;
+        imports = worker1Modules;
       };
 
-      host2 = { name, nodes, pkgs, ...}: {
+      worker2 = { name, nodes, pkgs, ...}: {
         deployment = {
           targetHost = "10.60.60.12";
           targetUser = builtins.getEnv "USER";
         };
-        imports = host2Modules;
+        imports = worker2Modules;
       };
 
-      host3 = { name, nodes, pkgs, ...}: {
+      worker3 = { name, nodes, pkgs, ...}: {
         deployment = {
           targetHost = "10.60.60.13";
           targetUser = builtins.getEnv "USER";
         };
-        imports = host3Modules;  
+        imports = worker3Modules;  
       };
 
       monitoring = { name, nodes, pkgs, ...}: {

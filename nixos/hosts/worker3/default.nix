@@ -14,5 +14,5 @@
     ../../modules/common.nix
   ];
 
-  networking.hostName = "host1";
+  networking.hostName = "worker3";
 }

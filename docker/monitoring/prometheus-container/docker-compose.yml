@@ -4,11 +4,15 @@ services:
     container_name: prometheus
     restart: unless-stopped
     user: "1000:131"
-    ports:
-      - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
+    networks: 
+      - monitoring-network
+
+networks:
+  monitoring-network:
+    external: true
