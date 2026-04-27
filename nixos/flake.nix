@@ -35,6 +35,10 @@
       ./hosts/host3
     ] ++ generalModules;
 
+    monitoringModules = [
+      ./hosts/monitoring
+    ] ++ generalModules;
+
   in {
     # nixos-anywhere
 
@@ -62,6 +66,12 @@
         inherit system;
         specialArgs = { inherit disko inputs; };
         modules = host3Modules;
+      };
+
+      monitoring = nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit disko inputs; };
+          modules = monitoringModules;
       };
 
     };
@@ -106,6 +116,14 @@
           targetUser = builtins.getEnv "USER";
         };
         imports = host3Modules;  
+      };
+
+      monitoring = { name, nodes, pkgs, ...}: {
+          deployment = {
+              targetHost = "10.60.60.14";
+              targetUser = builtins.getEnv "USER";
+          };
+          imports = monitoringModules;
       };
 
     };
