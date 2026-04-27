@@ -16,6 +16,7 @@
     ../../modules/fail2ban.nix
     ../../modules/docker.nix
     ../../modules/neovim.nix
+    ../../modules/node_exporter.nix
   ];
 
   # Set hostname
