@@ -206,6 +206,129 @@ Host <host-ip>
   IdentityFile ~/.ssh/<your-key>
 ```
 
+## Secrets management with agenix
+
+[agenix](https://github.com/ryantm/agenix) manages secrets by encrypting them
+with [age](https://age-encryption.org/) (asymmetric crypto). Encrypted files are
+safe to commit to git — only holders of the corresponding private keys can decrypt
+them.
+
+### How it works
+
+Each secret is encrypted for a set of public keys defined in `nixos/secrets/secrets.nix`.
+At boot, the NixOS agenix module decrypts secrets using the host's SSH host key
+(`/etc/ssh/ssh_host_ed25519_key`) and writes the plaintext to `/run/agenix/`
+(tmpfs, cleared on reboot). Services read secrets from that path.
+
+#### Access control — `nixos/secrets/secrets.nix`
+
+```nix
+let
+  alex   = "ssh-ed25519 AAAA...";  # admin public key
+  choped = "ssh-ed25519 AAAA...";  # admin public key
+  caddy  = "ssh-ed25519 AAAA...";  # host public key (root@nixos)
+
+  all_admins = [ alex choped ];
+in
+{
+  "cf-token.age".publicKeys = all_admins ++ [ caddy ];
+}
+```
+
+Every key listed can decrypt the secret:
+- **Admin keys** — allow admins to edit secrets from their machines
+- **Host key** — allows the host to decrypt at activation time (`nixos-rebuild switch`)
+
+The host key is `/etc/ssh/ssh_host_ed25519_key`, generated at first boot. Retrieve
+it with:
+```bash
+ssh root@<host-ip> "cat /etc/ssh/ssh_host_ed25519_key.pub"
+```
+
+#### Referencing a secret in a host config
+
+```nix
+age.secrets.cf-token = {
+  file  = ../../secrets/cf-token.age;  # encrypted blob tracked in git
+  owner = "docker";                    # unix owner of the decrypted file
+};
+```
+
+The decrypted path is available in Nix as `config.age.secrets.cf-token.path`,
+which resolves to `/run/agenix/cf-token` at runtime.
+
+### Creating or editing a secret
+
+```bash
+cd nixos/secrets
+
+# Create or edit a secret (opens $EDITOR with decrypted content)
+nix shell github:ryantm/agenix -- -e <secret-name>.age --identity ~/.ssh/<your-key>
+```
+
+agenix reads `secrets.nix` to determine which public keys to encrypt for, so all
+listed recipients can decrypt the result.
+
+### Adding a new secret — full workflow
+
+1. Add the entry in `nixos/secrets/secrets.nix`:
+   ```nix
+   "new-secret.age".publicKeys = all_admins ++ [ host ];
+   ```
+
+2. Create the encrypted file:
+   ```bash
+   cd nixos/secrets
+   nix shell github:ryantm/agenix -- -e new-secret.age --identity ~/.ssh/<your-key>
+   ```
+
+3. Reference it in the host config (`nixos/hosts/<host>/default.nix`):
+   ```nix
+   age.secrets.new-secret.file = ../../secrets/new-secret.age;
+   ```
+
+4. Use the runtime path in a service:
+
+   **NixOS service** (`owner` = the service user):
+   ```nix
+   age.secrets.new-secret = {
+     file  = ../../secrets/new-secret.age;
+     owner = "myservice";
+   };
+
+   services.foo.passwordFile = config.age.secrets.new-secret.path;
+   # resolves to /run/agenix/new-secret at runtime
+   ```
+
+   **Docker Compose** (`owner = "docker"` in the host config):
+
+   The decrypted file at `/run/agenix/new-secret` is owned by the `docker` user.
+   Bind-mount it into the container:
+   ```yaml
+   # /srv/docker/myapp/compose.yml
+   services:
+     myapp:
+       image: myapp:latest
+       volumes:
+         - /run/agenix/new-secret:/run/secrets/new-secret:ro
+       environment:
+         SECRET_FILE: /run/secrets/new-secret
+   ```
+
+   Or use it as an `env_file` if the secret is in `KEY=value` format:
+   ```yaml
+   services:
+     myapp:
+       image: myapp:latest
+       env_file:
+         - /run/agenix/new-secret
+   ```
+
+5. Deploy with Colmena:
+   ```bash
+   nix run github:zhaofengli/colmena -- apply --on <hostname> --impure
+   ```
+
 # Docker
 
 [Docker](https://www.docker.com/) provides the ability to package and run an application in a loosely 
