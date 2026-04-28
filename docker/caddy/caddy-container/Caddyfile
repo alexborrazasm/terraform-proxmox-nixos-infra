@@ -1,5 +1,5 @@
 {
-  admin 0.0.0.0:2019
+	admin 0.0.0.0:2019
 	servers {
 		metrics
 	}
@@ -11,9 +11,25 @@
 	}
 
 	@test host test.mariolamasangeriz.net
-
 	handle @test {
 		respond "estoy bibo"
+	}
+
+	@grafana host grafana.mariolamasangeriz.net
+	handle @grafana {
+    redir / /d/virtual-infra-v1/virtual-infrastructure?kiosk
+		reverse_proxy http://10.60.60.14:3000
+	}
+
+	@workers host workers.mariolamasangeriz.net
+	handle @workers {
+		reverse_proxy {
+			to 10.60.60.11:80 10.60.60.12:80 10.60.60.13:80
+			lb_policy round_robin
+			health_path /health
+			health_interval 5s
+			health_timeout 3s
+		}
 	}
 
 	handle {
