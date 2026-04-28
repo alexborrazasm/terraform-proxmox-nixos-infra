@@ -12,6 +12,7 @@
     ../../modules/neovim.nix
     ../../modules/node_exporter.nix
     ../../modules/common.nix
+    ../../modules/nginx_worker.nix
   ];
 
   networking.hostName = "worker3";

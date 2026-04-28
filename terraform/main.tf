@@ -29,7 +29,7 @@ resource "proxmox_vm_qemu" "vm1" {
   onboot   = true
 
   cpu {
-    cores   = 2
+    cores   = 6
     sockets = 1
     type    = "host"
   }
@@ -68,11 +68,11 @@ resource "proxmox_vm_qemu" "vm1" {
 
 resource "proxmox_vm_qemu" "vm2" {
   vmid        = 111
-  name        = "nixos-host1"
+  name        = "nixos-worker1"
   target_node = "pve"
   clone       = "template-deb13"
   full_clone  = true
-  tags        = "nixos;dmz"
+  tags        = "nixos;dmz;worker;nginx"
 
   agent    = 1
   os_type  = "l26"
@@ -81,7 +81,7 @@ resource "proxmox_vm_qemu" "vm2" {
   onboot   = true
 
   cpu {
-    cores   = 2
+    cores   = 1
     sockets = 1
     type    = "host"
   }
@@ -120,11 +120,11 @@ resource "proxmox_vm_qemu" "vm2" {
 
 resource "proxmox_vm_qemu" "vm3" {
   vmid        = 112
-  name        = "nixos-host2"
+  name        = "nixos-worker2"
   target_node = "pve"
   clone       = "template-deb13"
   full_clone  = true
-  tags        = "nixos;dmz"
+  tags        = "nixos;dmz;worker;nginx"
 
   agent    = 1
   os_type  = "l26"
@@ -133,7 +133,7 @@ resource "proxmox_vm_qemu" "vm3" {
   onboot   = true
 
   cpu {
-    cores   = 2
+    cores   = 1
     sockets = 1
     type    = "host"
   }
@@ -172,11 +172,11 @@ resource "proxmox_vm_qemu" "vm3" {
 
 resource "proxmox_vm_qemu" "vm4" {
   vmid        = 113
-  name        = "nixos-host3"
+  name        = "nixos-worker3"
   target_node = "pve"
   clone       = "template-deb13"
   full_clone  = true
-  tags        = "nixos;dmz"
+  tags        = "nixos;dmz;worker;nginx"
 
   agent    = 1
   os_type  = "l26"
@@ -185,7 +185,7 @@ resource "proxmox_vm_qemu" "vm4" {
   onboot   = true
 
   cpu {
-    cores   = 2
+    cores   = 1
     sockets = 1
     type    = "host"
   }
@@ -224,7 +224,7 @@ resource "proxmox_vm_qemu" "vm4" {
 
 resource "proxmox_vm_qemu" "vm5" {
   vmid        = 114
-  name        = "nixos-monitorig"
+  name        = "nixos-monitoring"
   target_node = "pve"
   clone       = "template-deb13"
   full_clone  = true
@@ -242,7 +242,7 @@ resource "proxmox_vm_qemu" "vm5" {
     type    = "host"
   }
 
-  memory = 2048
+  memory = 4092
 
   disks {
     scsi {
