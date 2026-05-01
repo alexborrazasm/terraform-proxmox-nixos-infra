@@ -1,0 +1,174 @@
+% LTeX: language=es
+\documentclass[a4paper, 11pt]{article}
+\usepackage{comment} 
+\usepackage{fullpage} 
+\usepackage{graphicx}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{MnSymbol,wasysym}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, fit, backgrounds, shapes.geometric}
+\pgfdeclarelayer{background}
+\pgfsetlayers{ background, main }
+\usepackage{xcolor}
+\usepackage{parskip}
+\usepackage{dirtree}
+\definecolor{linkblue}{HTML}{1a0dab}
+\usepackage[
+    colorlinks=true,
+    linkcolor=linkblue,
+    filecolor=linkblue,
+    urlcolor=linkblue,
+    citecolor=linkblue,
+    pdfdisplaydoctitle=true,
+]{hyperref}
+
+\begin{document}
+
+\begin{titlepage}
+    \vspace*{\fill}
+
+    \begin{center}
+        {\huge \textbf{Trabajo Tutelado AII: \\ [0.5cm] Infraestructura declarativa reproducible usando OpenTofu y NixOS}}
+    \end{center}
+
+    \vspace*{\fill}
+
+    \begin{flushright}
+        \textit{Autores:} \\
+        Mario Lamas Angeriz (\href{mailto:m.lamasa@udc.es}{m.lamasa@udc.es}) \\
+        Alexandre Borrazás Mancebo (\href{mailto:alexandre.bmancebo@udc.es}{alexandre.bmancebo@udc.es}) \\
+        Repositorio: \\ 
+        \url{https://github.com/alexborrazasm/terraform-proxmox-nixos-infra}
+    \end{flushright}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Propuesta}
+
+Aprender más sobre Infrastructure as Code (IaC) usando herramientas como OpenTofu que permite describir y desplegar infraestructura (máquinas virtuales, redes, almacenamiento, etc.) de forma declarativa, mientras que NixOS (tenemos experiencia previa) proporciona un sistema operativo completamente reproducible cuya configuración también se define mediante código.
+
+Este trabajo propone explorar la integración de ambas tecnologías para crear una infraestructura completamente declarativa, donde tanto la creación de recursos como la configuración del sistema operativo estén definidas en repositorios versionados (git).
+Objetivos
+
+El objetivo principal del trabajo es diseñar e implementar una plataforma de infraestructura reproducible basada en principios de Infrastructure as Code.
+
+\section{Objetivos}
+
+\begin{itemize} 
+  \item Estudiar el paradigma de infraestructura declarativa.
+  \item Analizar el funcionamiento de OpenTofu para la provisión de recursos.
+  \item Analizar el modelo de configuración declarativa de NixOS.
+  \item Diseñar una arquitectura donde OpenTofu gestione la infraestructura y NixOS configure los sistemas.
+  \item Implementar un entorno reproducible donde la infraestructura pueda desplegarse automáticamente a partir del código.
+  \item Evaluar las ventajas y limitaciones del enfoque propuesto.
+\end{itemize} 
+
+\section{Tecnologías usadas}
+
+\begin{itemize}
+  \item Proxmox VE: plataforma de virtualización open-source que utilizamos como hipervisor para la gestión de nuestras máquinas virtuales.
+  \item OpenTofu: fork de Terraform open-source, herramienta de IaC que empleamos para la delcaración y asiagnación de recursos de nuestras máquinas virtuales.
+  \item NixOS: distribución de Linux que emplea el gestor de paquetes Nix, gracias a su configuración delcarativa nos permite desplegar en las máquinas virtuales todo tipo de servicios de forma sencilla y automatizada.
+  \item nixos-anywhere: herramienta de instalación de NixOs, nos permite realizar la instalación del SO de forma remota mediante ssh y de forma completamente automatizada.
+  \item Colmena: tras la primer build de los sistemas de NixOS Colmena nos permite realizar cambios sobre el SO (mientras este se ejecuta) de forma remota y sencilla sin falta de reinstalar.
+  \item agenix: paquete que permite la gestion de secretos mediante encriptación age (\url{https://github.com/FiloSottile/age}), de esta forma podemos mantener registro de claves y compartirlas entre máquinas sin miedo a exponernos.
+  \item Docker: mediante la configuración en nixos, podemos desplegar servicios sobre docker en boot lanzandolos de forma automatizada.
+\end{itemize}
+
+\section{Diagrama de red}
+
+Para comenzar el proyecto decidimos que lo primero de todo era deifinir la estructura de red, y equipos/contenedores a crear.
+
+Como se puede ver en la \hyperref[fig:red]{Figura \ref{fig:red}}, se creo una red DMZ que conectase con el router para poder aislar 
+las máquinas y reproducir de forma más fiable una red empresarial. La red LAN es la red Wi-Fi del router y la WAN representa internet.
+El router realmente está virtualizado al igual que el resto de contenedores y VM's. Hemos redireccionado el puerto 3478 del router para que 
+permita la conexión con la vpn que montamos. La redireccion del puerto 80/443 hacia la máquina con caddy permite el acceso externo a la infraestructura.
+
+El resto de las máquinas de la red estan aisladas frente accesos no permitidos, śolamente acceptan conexiones ssh con certificado (se introducieron dentro de las VM
+nuestros certificados para un acceso más seguro y rápido).
+
+Una vez con esto establecido podíamos centrarnos en el desarrollo del IaC.
+
+\newpage
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{./figures/networking.png}
+  \caption{Esquema de red}\label{fig:red}
+\end{figure}
+
+\newpage
+
+\section{Estructura del proyecto}
+
+Organizamos el proyecto en 2 carpetas:
+
+\begin{itemize}
+  \item nixos: dentro de esta carpeta se guardan todos los archivos de configuración relacionados con los equipos.
+  \item terraform: aqui mantenemos la declaración de asignación de recursos a cada máquina.
+\end{itemize}
+
+\dirtree{%
+.1 ..
+.2 LICENSE.
+.2 README.md.
+.2 nixos.
+.3 first-deploy.sh.
+.3 flake.lock.
+.3 flake.nix.
+.3 hosts.
+.4 caddy.
+.5 default.nix.
+.5 disk-config.nix.
+.5 hardware-configuration.nix.
+.4 monitoring.
+.5 \ldots.
+.4 worker1.
+.5 \ldots.
+.4 worker2.
+.5 \ldots.
+.4 worker3.
+.5 \ldots.
+.3 modules.
+.4 caddy.nix.
+.4 common.nix.
+.4 ddns.nix.
+.4 docker.nix.
+.4 fail2ban.nix.
+.4 grafana.nix.
+.4 neovim.nix.
+.4 nginx-indexes.
+.5 \ldots.
+.4 nginx\_worker.nix.
+.4 node\_exporter.nix.
+.4 prometheus.nix.
+.4 ssh.nix.
+.4 users.nix.
+.4 utils.nix.
+.3 secrets.
+.4 cf-token.age.
+.4 secrets.nix.
+.2 terraform.
+.3 main.tf.
+.3 tofu.sh.
+.3 variables.tf.
+}
+
+\section{Desarrollo del proyecto}
+
+\subsection{Configuraciones iniciales}
+
+\subsection{}
+
+\subsection{}
+
+\section{Ventajas y limitaciones}
+
+provider de proxmox es mierda
+
+\end{document}
