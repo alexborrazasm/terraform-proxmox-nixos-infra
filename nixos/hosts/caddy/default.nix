@@ -13,12 +13,13 @@
     ../../modules/node_exporter.nix
     ../../modules/common.nix
     ../../modules/ddns.nix
+    ../../modules/caddy.nix
   ];
 
   networking.hostName = "caddy";
 
   age.secrets.cf-token = {
-    file = ../../secrets/cf-token.age;
-    owner = "docker";
+      file = ../../secrets/cf-token.age;
+      owner = "docker";
   };
 }

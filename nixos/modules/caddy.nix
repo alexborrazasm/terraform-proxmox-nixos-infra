@@ -1,14 +1,22 @@
-{ pkgs, config, ... }: {
+{ 
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
 
   services.caddy = {
     enable = true;
+    configFile = ./caddy-config/Caddyfile;
+    openFirewall = true;
     package = pkgs.caddy.withPlugins {
-      plugins = [ "github.com/caddy-dns/cloudflare@v0.0.0-20240409160914-1f66060875e5" ];
-      # Nota: La primera vez que hagas el build, Nix fallará y te dará el hash correcto. 
-      # Sustitúyelo aquí cuando te lo dé.
-      hash = "sha256-0000000000000000000000000000000000000000000="; 
+      plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
+      hash = "sha256-Olz4W84Kiyldy+JtbIicVCL7dAYl4zq+2rxEOUTObxA=";
     };
-    configFile = ../../docker/caddy/caddy-container/Caddyfile;
   };
+  
+  # For Grafana metrics collection
+  networking.firewall.allowedTCPPorts = [ 2019 ];
+
   systemd.services.caddy.serviceConfig.EnvironmentFile = config.age.secrets.cf-token.path;
 }
