@@ -42,7 +42,7 @@ resource "proxmox_vm_qemu" "vm1" {
       virtio0 {
         disk {
           storage  = "local-lvm"
-          size     = "3G"
+          size     = "20G"
           iothread = true
         }
       }
@@ -99,7 +99,7 @@ resource "proxmox_vm_qemu" "vm2" {
       virtio0 {
         disk {
           storage  = "local-lvm"
-          size     = "3G"
+          size     = "20G"
           iothread = true
         }
       }
@@ -156,7 +156,7 @@ resource "proxmox_vm_qemu" "vm3" {
       virtio0 {
         disk {
           storage  = "local-lvm"
-          size     = "3G"
+          size     = "20G"
           iothread = true
         }
       }
@@ -213,7 +213,7 @@ resource "proxmox_vm_qemu" "vm4" {
       virtio0 {
         disk {
           storage  = "local-lvm"
-          size     = "3G"
+          size     = "20G"
           iothread = true
         }
       }
@@ -248,7 +248,7 @@ resource "proxmox_vm_qemu" "vm5" {
   target_node = "pve"
   clone       = "debian-12-template"
   full_clone  = true
-  tags        = "nixos;monitoring;grafana;node_exporter;prometheus"
+  tags        = "nixos;monitoring;grafana;prometheus"
 
   agent    = 1
   os_type  = "l26"
@@ -270,7 +270,7 @@ resource "proxmox_vm_qemu" "vm5" {
       virtio0 {
         disk {
           storage  = "local-lvm"
-          size     = "3G"
+          size     = "20G"
           iothread = true
         }
       }
