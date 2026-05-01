@@ -3245,7 +3245,10 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "group": "",
+                    "datasource": {
+                      "name": "bfkdgu0nr13pcb"
+                    },
+                    "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
                       "expr": "sum by (instance) (rate(node_disk_read_bytes_total{job=\"node_exporters\", instance!=\"10.60.60.1:9100\"}[$__rate_interval]))",
@@ -3261,7 +3264,10 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "group": "",
+                    "datasource": {
+                      "name": "bfkdgu0nr13pcb"
+                    },
+                    "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
                       "expr": "sum by (instance) (rate(node_disk_written_bytes_total{job=\"node_exporters\", instance!=\"10.60.60.1:9100\"}[$__rate_interval]))",
@@ -3280,7 +3286,7 @@
         "description": "",
         "id": 63,
         "links": [],
-        "title": "Disck I/O Throughput (read/write)",
+        "title": "Disk I/O Throughput (read/write)",
         "vizConfig": {
           "group": "timeseries",
           "kind": "VizConfig",
@@ -4803,7 +4809,7 @@
                 ]
               }
             },
-            "title": "💾 Disco"
+            "title": "💾 Disk"
           }
         }
       ]

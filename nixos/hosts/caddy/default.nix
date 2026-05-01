@@ -12,6 +12,7 @@
     ../../modules/neovim.nix
     ../../modules/node_exporter.nix
     ../../modules/common.nix
+    ../../modules/ddns.nix
   ];
 
   networking.hostName = "caddy";

@@ -12,6 +12,8 @@
     ../../modules/neovim.nix
     ../../modules/node_exporter.nix
     ../../modules/common.nix
+    ../../modules/grafana.nix
+    ../../modules/prometheus.nix
   ];
 
   networking.hostName = "monitoring";

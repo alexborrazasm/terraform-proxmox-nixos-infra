@@ -26,6 +26,8 @@
     };
   };
 
+  virtualisation.oci-containers.backend = "docker";
+
   users.users = {
     docker = {
       isNormalUser = true;
