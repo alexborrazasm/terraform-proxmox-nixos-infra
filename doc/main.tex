@@ -163,9 +163,19 @@ Organizamos el proyecto en 2 carpetas:
 
 \subsection{Configuraciones iniciales}
 
-\subsection{}
+Para comezar se realizó la configuración de un router pfsense virtual que nos permitiese una buena gestión de las redes y monitoriación.
+Como siguiente paso configuramos un acceso remoto mediante TailScale como backup, pues este solo permite el acceso de uno de nosotros a la red.
+Montamos entonces otra VPN, wireguard, que nos permite el acceso remoto a la red a los 2.
 
-\subsection{}
+\subsection{Declaración de los recursos}
+
+Para poder utilizar OpenTofu para la asignación de recursos, desde proxmox creamos un usuario y rol para OpenTofu y una API key.
+Para continuar realizamos la configuración de los recursos para una máquina template declarada y mediante la configuración previa lanzamos
+(meter código aquí)
+la declaración de la VM que usaremos como template.
+Usamos un debian12 con cloud init como template para luego al instalar nixos las claves ssh se generen solas y sin replicaciones
+
+\subsection{Configuración con nixos-anywhere}
 
 \section{Ventajas y limitaciones}
 
