@@ -38,9 +38,7 @@
     \begin{flushright}
         \textit{Autores:} \\
         Mario Lamas Angeriz (\href{mailto:m.lamasa@udc.es}{m.lamasa@udc.es}) \\
-        Alexandre Borrazás Mancebo (\href{mailto:alexandre.bmancebo@udc.es}{alexandre.bmancebo@udc.es}) \\
-        Repositorio: \\ 
-        \url{https://github.com/alexborrazasm/terraform-proxmox-nixos-infra}
+        \href{https://github.com/alexborrazasm/terraform-proxmox-nixos-infra}{Repositorio en Github} \hfill Alexandre Borrazás Mancebo (\href{mailto:alexandre.bmancebo@udc.es}{alexandre.bmancebo@udc.es}) \\
     \end{flushright}
 \end{titlepage}
 
@@ -50,51 +48,50 @@
 
 \section{Propuesta}
 
-Aprender más sobre Infrastructure as Code (IaC) usando herramientas como OpenTofu que permite describir y desplegar infraestructura (máquinas virtuales, redes, almacenamiento, etc.) de forma declarativa, mientras que NixOS (tenemos experiencia previa) proporciona un sistema operativo completamente reproducible cuya configuración también se define mediante código.
+Aprender más sobre \textbf{Infrastructure as Code} (\textbf{IaC}) usando herramientas como \textbf{OpenTofu} que permite describir y desplegar infraestructura (máquinas virtuales, redes, almacenamiento, etc.) de forma declarativa, mientras que \textbf{NixOS} (tenemos experiencia previa) proporciona un sistema operativo completamente reproducible cuya configuración también se define mediante código.
 
-Este trabajo propone explorar la integración de ambas tecnologías para crear una infraestructura completamente declarativa, donde tanto la creación de recursos como la configuración del sistema operativo estén definidas en repositorios versionados (git).
-Objetivos
-
-El objetivo principal del trabajo es diseñar e implementar una plataforma de infraestructura reproducible basada en principios de Infrastructure as Code.
+Este trabajo propone explorar la integración de ambas tecnologías para crear una infraestructura completamente declarativa, donde tanto la creación de recursos como la configuración del sistema operativo estén definidas en repositorios versionados (\href{https://github.com/alexborrazasm/terraform-proxmox-nixos-infra}{\texttt{git}}).
 
 \section{Objetivos}
 
+El objetivo principal del trabajo es diseñar e implementar una plataforma de infraestructura reproducible basada en principios de \textbf{Infrastructure as Code}.
+
 \begin{itemize} 
   \item Estudiar el paradigma de infraestructura declarativa.
-  \item Analizar el funcionamiento de OpenTofu para la provisión de recursos.
-  \item Analizar el modelo de configuración declarativa de NixOS.
-  \item Diseñar una arquitectura donde OpenTofu gestione la infraestructura y NixOS configure los sistemas.
+  \item Analizar el funcionamiento de \textbf{OpenTofu} para la provisión de recursos.
+  \item Analizar el modelo de configuración declarativa de \textbf{NixOS}.
+  \item Diseñar una arquitectura donde \textbf{OpenTofu} gestione la infraestructura y \textbf{NixOS} configure los sistemas.
   \item Implementar un entorno reproducible donde la infraestructura pueda desplegarse automáticamente a partir del código.
   \item Evaluar las ventajas y limitaciones del enfoque propuesto.
 \end{itemize} 
 
+\section{Hardware empleado}
+
+balblablabla \ldots 
+
 \section{Tecnologías usadas}
 
+Para la realización de la practica decidimos emplear las siguientes tecnologías:
+
 \begin{itemize}
-  \item Proxmox VE: plataforma de virtualización open-source que utilizamos como hipervisor para la gestión de nuestras máquinas virtuales.
-  \item OpenTofu: fork de Terraform open-source, herramienta de IaC que empleamos para la delcaración y asiagnación de recursos de nuestras máquinas virtuales.
-  \item NixOS: distribución de Linux que emplea el gestor de paquetes Nix, gracias a su configuración delcarativa nos permite desplegar en las máquinas virtuales todo tipo de servicios de forma sencilla y automatizada.
-  \item nixos-anywhere: herramienta de instalación de NixOs, nos permite realizar la instalación del SO de forma remota mediante ssh y de forma completamente automatizada.
-  \item Colmena: tras la primer build de los sistemas de NixOS Colmena nos permite realizar cambios sobre el SO (mientras este se ejecuta) de forma remota y sencilla sin falta de reinstalar.
-  \item agenix: paquete que permite la gestion de secretos mediante encriptación age (\url{https://github.com/FiloSottile/age}), de esta forma podemos mantener registro de claves y compartirlas entre máquinas sin miedo a exponernos.
-  \item Docker: mediante la configuración en nixos, podemos desplegar servicios sobre docker en boot lanzandolos de forma automatizada.
+  \item \textbf{Proxmox VE}: plataforma de virtualización open-source que utilizamos como hipervisor para la gestión de nuestras máquinas virtuales.
+  \item \textbf{OpenTofu}: fork de Terraform open-source, herramienta de IaC que empleamos para la delcaración y asiagnación de recursos de nuestras máquinas virtuales.
+  \item \textbf{NixOS}: distribución de Linux que emplea el gestor de paquetes Nix, gracias a su configuración delcarativa nos permite desplegar en las máquinas virtuales todo tipo de servicios de forma sencilla y automatizada.
+  \item \textbf{nixos-anywhere}: herramienta de instalación de NixOS, nos permite realizar la instalación del SO de forma remota mediante \texttt{ssh} y de forma completamente automatizada.
+  \item \textbf{Colmena}: tras la primer build de los sistemas de NixOS Colmena nos permite realizar cambios sobre el SO (mientras este se ejecuta) de forma remota y sencilla sin falta de reinstalar.
+  \item \textbf{agenix}: paquete que permite la gestion de secretos mediante encriptación \href{https://github.com/FiloSottile/age}{\texttt{age}}, de esta forma podemos mantener registro de claves y compartirlas entre máquinas sin miedo a exponernos.
+  \item \textbf{Docker}: mediante la configuración en NixOS, podemos desplegar servicios sobre Docker en boot lanzandolos de forma automatizada.
 \end{itemize}
 
 \section{Diagrama de red}
 
 Para comenzar el proyecto decidimos que lo primero de todo era deifinir la estructura de red, y equipos/contenedores a crear.
 
-Como se puede ver en la \hyperref[fig:red]{Figura \ref{fig:red}}, se creo una red DMZ que conectase con el router para poder aislar 
-las máquinas y reproducir de forma más fiable una red empresarial. La red LAN es la red Wi-Fi del router y la WAN representa internet.
-El router realmente está virtualizado al igual que el resto de contenedores y VM's. Hemos redireccionado el puerto 3478 del router para que 
-permita la conexión con la vpn que montamos. La redireccion del puerto 80/443 hacia la máquina con caddy permite el acceso externo a la infraestructura.
+Como se puede ver en la \autoref{fig:red}, se creo una red \textbf{DMZ} que conectase con el router para poder aislar las máquinas y reproducir de forma más fiable una red empresarial. La red \textbf{LAN} es la red Wi-Fi del router y la \textbf{WAN} representa internet. El router realmente está virtualizado al igual que el resto de contenedores y VM's. Hemos redireccionado el puerto \texttt{3478} del router para que permita la conexión con la vpn que montamos. La redireccion del puerto \texttt{80}/\texttt{443} hacia la máquina con \texttt{caddy} permite el acceso externo a la infraestructura.
 
-El resto de las máquinas de la red estan aisladas frente accesos no permitidos, śolamente acceptan conexiones ssh con certificado (se introducieron dentro de las VM
-nuestros certificados para un acceso más seguro y rápido).
+El resto de las máquinas de la red estan aisladas frente accesos no permitidos, śolamente acceptan conexiones \texttt{ssh} con certificado (se introducieron dentro de las VM nuestros certificados para un acceso más seguro y rápido).
 
 Una vez con esto establecido podíamos centrarnos en el desarrollo del IaC.
-
-\newpage
 
 \begin{figure}[H]
   \centering
@@ -108,15 +105,8 @@ Una vez con esto establecido podíamos centrarnos en el desarrollo del IaC.
 
 Organizamos el proyecto en 2 carpetas:
 
-\begin{itemize}
-  \item nixos: dentro de esta carpeta se guardan todos los archivos de configuración relacionados con los equipos.
-  \item terraform: aqui mantenemos la declaración de asignación de recursos a cada máquina.
-\end{itemize}
-
 \dirtree{%
 .1 ..
-.2 LICENSE.
-.2 README.md.
 .2 nixos.
 .3 first-deploy.sh.
 .3 flake.lock.
@@ -159,26 +149,262 @@ Organizamos el proyecto en 2 carpetas:
 .3 variables.tf.
 }
 
+\begin{itemize}
+  \item \texttt{nixos}: dentro de esta carpeta se guardan todos los archivos de configuración relacionados con los equipos.
+  \item \texttt{terraform}: aqui mantenemos la declaración de asignación de recursos a cada máquina.
+\end{itemize}
+
 \section{Desarrollo del proyecto}
 
 \subsection{Configuraciones iniciales}
 
-Para comezar se realizó la configuración de un router pfsense virtual que nos permitiese una buena gestión de las redes y monitoriación.
-Como siguiente paso configuramos un acceso remoto mediante TailScale como backup, pues este solo permite el acceso de uno de nosotros a la red.
-Montamos entonces otra VPN, wireguard, que nos permite el acceso remoto a la red a los 2.
+Para comezar se realizó la configuración de un router \textbf{pfsense} virtual que nos permitiese una buena gestión de las redes y monitoriación. Como siguiente paso configuramos un acceso remoto mediante \textbf{TailScale} como backup, pues este solo permite el acceso de uno de nosotros a la red. Montamos entonces otra VPN, \textbf{WireGuard}, que nos permite el acceso remoto a la red a los 2. Ademas el TailScale casi se monta solo por lo que queriamos hacer el WireGuard de 0 como una experiencia más real y segura.
 
 \subsection{Declaración de los recursos}
 
-Para poder utilizar OpenTofu para la asignación de recursos, desde proxmox creamos un usuario y rol para OpenTofu y una API key.
-Para continuar realizamos la configuración de los recursos para una máquina template declarada y mediante la configuración previa lanzamos
-(meter código aquí)
-la declaración de la VM que usaremos como template.
-Usamos un debian12 con cloud init como template para luego al instalar nixos las claves ssh se generen solas y sin replicaciones
+Para que OpenTofu pueda interactuar con el hipervisor, es necesario configurar el proveedor de Proxmox en el archivo \texttt{main.tf}. La autenticación se realiza mediante un \textbf{API Token} para evitar el uso de la contraseña de \texttt{root}.
+
+\begin{verbatim}
+provider "proxmox" {
+  endpoint  = var.proxmox_api_url
+  api_token = var.proxmox_api_token
+  insecure  = true
+}
+
+resource "proxmox_virtual_machine" "nixos_vm" {
+  count       = 3
+  name        = "worker-${count.index}"
+  target_node = "pve"
+  clone {
+    vm_id = var.debian_template_id
+  }
+  
+  network_device {
+    bridge = "vmbr1" # DMZ
+  }
+
+  cpu {
+    cores = 2
+  }
+
+  memory {
+    dedicated = 2048
+  }
+}
+\end{verbatim}
+
+Para automatizar este proceso, utilizamos un script \texttt{tofu.sh} que carga las variables de entorno desde un archivo \texttt{.env}, facilitando el despliegue sin exponer credenciales en el código fuente. El uso de una plantilla \textbf{Debian} con \textbf{Cloud-init} es clave: nos permite inyectar nuestras claves SSH públicas de forma automática, dejando la máquina lista para que NixOS tome el control.
 
 \subsection{Configuración con nixos-anywhere}
 
+Una vez que OpenTofu ha levantado las máquinas virtuales con Debian, utilizamos \textbf{nixos-anywhere} para realizar la transición a NixOS. Este proceso es crítico para la naturaleza declarativa del proyecto, ya que permite instalar NixOS en un sistema existente de forma remota.
+
+El flujo de trabajo que seguimos es:
+\begin{enumerate}
+    \item \textbf{Generación del hardware-config}: Nos conectamos a la VM recién creada para obtener la configuración específica de los controladores de Proxmox (\texttt{virtio}, \texttt{scsi}).
+    \item \textbf{Particionado con Disko}: Definimos el esquema de particiones en un archivo \texttt{disk-config.nix}. \texttt{nixos-anywhere} utiliza esta herramienta para formatear el disco de la VM Debian en caliente.
+    \item \textbf{Instalación kexec}: Se lanza un kernel de NixOS en memoria que sobrescribe el sistema Debian.
+\end{enumerate}
+
+El comando utilizado en nuestro script \texttt{first-deploy.sh} es:
+
+\begin{verbatim}
+nix run github:nix-community/nixos-anywhere -- \
+  --flake .#hostname \
+  template@ip-de-la-vm \
+  -i ~/.ssh/id_rsa
+\end{verbatim}
+
+Posteriormente, cualquier cambio en la configuración (servicios, usuarios, Docker) se gestiona con \textbf{Colmena}, lo que permite aplicar cambios en segundos sin reiniciar la máquina ni reinstalar el sistema.
+
+\section{Gestión de cambios con Colmena}
+
+Una vez realizado el despliegue inicial con \texttt{nixos-anywhere}, la herramienta encargada de gestionar el ciclo de vida de la configuración es \textbf{Colmena}. A diferencia de \texttt{nixos-anywhere}, que instala el sistema desde cero, Colmena aplica cambios incrementales sobre máquinas ya en ejecución mediante SSH, sin necesidad de reiniciar ni reinstalar.
+
+\subsection{Integración con el flake}
+
+Colmena lee su configuración directamente del output \texttt{colmena} del \texttt{flake.nix}. Cada host se define con su dirección IP (\texttt{targetHost}), usuario de despliegue (\texttt{targetUser}) y su configuración NixOS, que es exactamente la misma que se usa en \texttt{nixosConfigurations}. Esto garantiza que no existe divergencia entre el sistema instalado y el sistema gestionado.
+
+En el archivo \texttt{flake.nix} la sección de Colmena tiene la siguiente forma:
+
+\begin{verbatim}
+colmenaHive = colmena.lib.makeHive self.outputs.colmena;
+    colmena = {
+      meta = {
+        nixpkgs = import nixpkgs { inherit system; };
+        specialArgs = { inherit disko inputs; };
+      };
+
+      caddy = { name, nodes, pkgs, ... }: {
+        deployment = {
+          targetHost = "10.60.60.10";
+          targetUser = builtins.getEnv "USER";
+
+          # You can build on the target machine
+          # buildOnTarget = true;
+        };
+        imports = caddyModules;
+      };
+
+      worker1 = { name, nodes, pkgs, ...}: {
+        deployment = {
+          targetHost = "10.60.60.11";
+          targetUser = builtins.getEnv "USER";
+        };
+        imports = worker1Modules;
+      };
+
+      # worker2, worker3 ...
+
+      monitoring = { name, nodes, pkgs, ...}: {
+          deployment = {
+              targetHost = "10.60.60.14";
+              targetUser = builtins.getEnv "USER";
+          };
+          imports = monitoringModules;
+      };
+
+    };
+\end{verbatim}
+
+\subsection{Flujo de trabajo habitual}
+
+El flujo típico al modificar la configuración de uno o varios hosts es el siguiente:
+
+\begin{enumerate}
+  \item Se edita el módulo o archivo de host correspondiente en el repositorio.
+  \item Se verifica que la configuración compila correctamente sin desplegar:
+\begin{verbatim}
+nix run github:zhaofengli/colmena -- build
+\end{verbatim}
+  \item Si la build es exitosa, se despliega el cambio. Para aplicarlo a un único host:
+\begin{verbatim}
+nix run github:zhaofengli/colmena -- apply --on caddy --impure
+\end{verbatim}
+  Para aplicarlo a toda la infraestructura de forma simultánea:
+\begin{verbatim}
+nix run github:zhaofengli/colmena -- apply --impure
+\end{verbatim}
+  \item Colmena construye la nueva generación del sistema en la máquina local (o en el propio host si se configura despliegue remoto), la transfiere por SSH y ejecuta \texttt{nixos-rebuild switch}, activando los cambios en caliente.
+\end{enumerate}
+
+\subsection{Ventajas operativas}
+
+El uso de Colmena frente a otros enfoques de despliegue aporta varias ventajas prácticas en nuestro contexto:
+
+\begin{itemize}
+  \item \textbf{Despliegue paralelo}: Colmena puede aplicar cambios a múltiples hosts en paralelo, reduciendo el tiempo total de actualización de la infraestructura completa.
+  \item \textbf{SetUp sencillo}: no requiere instalar ningún agente en los hosts destino; únicamente necesita acceso SSH con el usuario y clave configurados en \texttt{deployment}.
+  \item \textbf{Consistencia}: aplicar la misma configuración varias veces produce siempre el mismo resultado, sin efectos secundarios acumulativos.
+\end{itemize}
+
+\subsection{Configuración SSH para Colmena}
+
+Para que Colmena pueda conectarse a cada host es necesario añadir una entrada en \texttt{\textasciitilde/.ssh/config} por cada máquina gestionada:
+
+\begin{verbatim}
+Host 10.60.60.10
+  IdentityFile ~/.ssh/id_ed25519
+Host 10.60.60.11
+  IdentityFile ~/.ssh/id_ed25519
+Host 10.60.60.12
+  IdentityFile ~/.ssh/id_ed25519
+Host 10.60.60.13
+  IdentityFile ~/.ssh/id_ed25519
+Host 10.60.60.14
+  IdentityFile ~/.ssh/id_ed25519
+\end{verbatim}
+
+De este modo Colmena selecciona automáticamente la clave correcta sin intervención manual durante el despliegue.
+
+\section{Configuración de NixOS}
+
+\subsection{Estructura del flake}
+
+El punto de entrada de toda la configuración NixOS es el archivo \texttt{flake.nix}, que actúa como manifiesto del proyecto: declara las dependencias externas (inputs) y expone las configuraciones de cada host (outputs). Entre los inputs más relevantes se encuentran \texttt{nixpkgs} (el repositorio de paquetes de NixOS), \texttt{agenix} (gestión de secretos), \texttt{disko} (particionado declarativo) y \texttt{colmena} (despliegue remoto).
+
+Cada host queda registrado tanto en el output \texttt{nixosConfigurations} (usado por \texttt{nixos-anywhere} en el primer despliegue) como en el output \texttt{colmena} (usado para actualizaciones posteriores). Esto garantiza que la misma definición de sistema se emplee independientemente del mecanismo de despliegue.
+
+\subsection{Módulos compartidos}
+
+Para evitar la duplicación de configuración entre hosts, extraemos toda la lógica reutilizable en módulos bajo \texttt{nixos/modules/}. Cada host importa el subconjunto de módulos que necesita desde su \texttt{default.nix}.
+
+\subsubsection{common.nix}
+
+Define la base común a todas las máquinas: zona horaria, locale, bootloader (\textbf{GRUB} en modo BIOS para compatibilidad con Proxmox), y el conjunto mínimo de paquetes del sistema (\texttt{git}, \texttt{htop}, \texttt{curl}, etc.). También habilita \texttt{nix.settings.experimental-features} para soportar flakes.
+
+\subsubsection{users.nix}
+
+Declara los usuarios del sistema de forma centralizada. Las claves SSH públicas de los administradores se incluyen directamente en la configuración, de modo que cualquier máquina que importe este módulo acepta las mismas identidades desde el primer arranque. Las contraseñas se deshabilitan forzando el acceso exclusivamente por certificado.
+
+\subsubsection{ssh.nix}
+
+Endurece la configuración del demonio SSH: deshabilita el login con contraseña (\texttt{PasswordAuthentication = false}). Combinado con \texttt{fail2ban}, forman una firme defensa frente a accesos remotos no autorizados en cada máquina.
+
+\subsubsection{fail2ban.nix}
+
+Habilita el servicio \texttt{fail2ban} con una jail para SSH que banea automáticamente direcciones IP tras varios intentos de autenticación fallidos. La configuración de este módulo es común a todos los hosts.
+
+\subsubsection{utils.nix y neovim.nix}
+
+Agrupan herramientas de administración del sistema (\texttt{tmux}, \texttt{ripgrep}, \texttt{jq}, \texttt{wget}, etc.) y la configuración personalizada de \textbf{Neovim} respectivamente, disponibles en todas las máquinas para facilitar el trabajo de los administradores.
+
+\subsection{Configuración de hosts}
+
+Cada directorio bajo \texttt{nixos/hosts/<hostname>/} contiene tres archivos:
+
+\begin{itemize}
+  \item \texttt{hardware-configuration.nix}: generado a partir de la plantilla Debian; captura los módulos del kernel necesarios para el hardware virtualizado de Proxmox (\texttt{virtio\_pci}, \texttt{virtio\_scsi}, etc.).
+  \item \texttt{disk-config.nix}: define el esquema de particiones mediante \texttt{disko}. Usamos una tabla \textbf{GPT} con una partición de arranque BIOS y una partición raíz \texttt{ext4}.
+  \item \texttt{default.nix}: configuración específica del host; importa los módulos necesarios, asigna el hostname y declara los servicios particulares de esa máquina.
+\end{itemize}
+
+\section{Servicios desplegados}
+
+\subsection{Caddy (proxy inverso)}
+
+La máquina \texttt{caddy} actúa como punto de entrada a toda la infraestructura. El módulo \texttt{caddy.nix} habilita el servicio \texttt{services.caddy} de NixOS apuntando a un \texttt{Caddyfile} personalizado ubicado en \texttt{modules/caddy-config/Caddyfile}. \textbf{Caddy} gestiona automáticamente los certificados TLS mediante \textbf{ACME}/\textbf{Let's Encrypt}, usando el token de \textbf{Cloudflare} (almacenado como secreto \texttt{age}) para el challenge \textbf{DNS-01}, lo que permite obtener certificados incluso sin exponer el puerto \texttt{80} directamente.
+
+El \texttt{Caddyfile} define los virtual hosts necesarios para enrutar el tráfico entrante hacia los servicios internos de la red DMZ mediante proxy inverso, añadiendo cabeceras de seguridad y terminación TLS en este punto.
+
+\subsection{DDNS (ddns.nix)}
+
+Dado que la IP pública del router puede cambiar, el módulo \texttt{ddns.nix} configura un servicio de \textbf{DNS dinámico} mediante la API de Cloudflare. Se despliega como un \texttt{systemd.services} periódico que comprueba la IP pública actual y actualiza el registro DNS correspondiente en caso de cambio, usando de nuevo el token de Cloudflare gestionado por \texttt{agenix}.
+
+\subsection{Workers con Nginx (nginx\_worker.nix)}
+
+Los hosts \texttt{worker1}, \texttt{worker2} y \texttt{worker3} son máquinas de propósito general que ejecutan servicios sobre Docker. El módulo \texttt{nginx\_worker.nix} levanta un servidor \textbf{Nginx} en cada worker que sirve una página de índice personalizada (los archivos \texttt{index1.html}, \texttt{index2.html} e \texttt{index3.html} ubicados en \texttt{modules/nginx-indexes/}), permitiendo identificar visualmente cada nodo a través del proxy inverso Caddy.
+
+\subsection{Docker (docker.nix)}
+
+El módulo \texttt{docker.nix} habilita el demonio Docker en los hosts que lo requieren mediante \texttt{virtualisation.docker.enable = true}, configura el usuario \texttt{docker} con los permisos necesarios y define los contenedores que deben arrancarse automáticamente en el boot del sistema mediante unidades \texttt{systemd} que invocan \texttt{docker compose up}. Los archivos \texttt{compose.yml} de cada servicio se despliegan en \texttt{/srv/docker/<servicio>/} y los secretos necesarios se montan desde \texttt{/run/agenix/} en modo solo lectura.
+
+\subsection{Monitorización: Prometheus, Node Exporter y Grafana}
+
+La máquina \texttt{monitoring} centraliza la observabilidad de toda la infraestructura mediante tres módulos:
+
+\begin{itemize}
+  \item \textbf{node\_exporter.nix}: habilitado en \textit{todos} los hosts, expone métricas del sistema (CPU, memoria, disco, red) en el puerto \texttt{9100} mediante \texttt{services.prometheus.exporters.node}.
+  \item \textbf{prometheus.nix}: desplegado únicamente en \texttt{monitoring}, configura \texttt{services.prometheus} con un \texttt{scrapeConfig} que apunta a los exporters de cada worker y del propio host Caddy. El intervalo de scraping y las reglas de retención se declaran en este módulo.
+  \item \textbf{grafana.nix}: también exclusivo de \texttt{monitoring}, levanta \texttt{services.grafana} con Prometheus como datasource provisionado automáticamente. Los dashboards se importan como JSON y se exponen al exterior a través del proxy inverso Caddy.
+\end{itemize}
+
+Esta arquitectura permite visualizar en tiempo real el estado de toda la granja de servidores desde un único panel sin necesidad de configuración manual una vez desplegada la infraestructura.
+
 \section{Ventajas y limitaciones}
 
-provider de proxmox es mierda
+\subsection{Ventajas}
+\begin{itemize}
+    \item \textbf{Reproducibilidad total}: Podemos recrear toda la infraestructura desde cero en cuestión de minutos usando únicamente los archivos del repositorio \texttt{git}.
+    \item \textbf{Seguridad}: Gracias a \texttt{agenix}, los secretos (tokens de Cloudflare, contraseñas de Docker) viajan cifrados en el repositorio y solo se descifran en el tiempo de ejecución en la memoria RAM de la VM.
+    \item \textbf{Gestión unificada}: La combinación de NixOS y Colmena permite gestionar una granja de servidores como si fuera una sola entidad.
+\end{itemize}
+
+\subsection{Limitaciones y desafíos}
+\begin{itemize}
+    \item \textbf{Curva de aprendizaje}: El ecosistema Nix (Flakes, lenguaje Nix) tiene una curva de aprendizaje pronunciada comparado con métodos tradicionales de administración.
+    \item \textbf{Calidad del Provider}: El proveedor de Proxmox para OpenTofu/Terraform presenta limitaciones en la gestión de estados complejos. En ocasiones, cambios menores en la configuración de hardware provocan largas esperas para que las VM's vuelvan a estar disponibles, esto es acendutado por el hardware que empleamos (los discos duros y controladora principalmente).
+    \item \textbf{Automatización incompleta}: No hemos logrado una ``automatización de un solo clic'' (\textit{full automation}) total; todavía se requiere la creación manual de la API Key en la interfaz de Proxmox y la captura manual del \texttt{hardware-configuration.nix} antes del primer despliegue.
+\end{itemize}
 
 \end{document}
