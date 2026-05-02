@@ -132,7 +132,7 @@ sh <(curl -L https://nixos.org/nix/install) --daemon
 
 Connect to the template VM and run:
 ```bash
-nix-shell -p nixos-install-tools --run "nixos-generate-config --no-filesystems --root /mnt"
+sudo $(which nix-shell) -p nixos-install-tools --run "nixos-generate-config --no-filesystems --root /mnt"
 cat /mnt/etc/nixos/hardware-configuration.nix
 ```
 

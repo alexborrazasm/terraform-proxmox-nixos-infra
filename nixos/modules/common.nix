@@ -1,13 +1,65 @@
 { lib, pkgs, ... }: {
   nixpkgs.config.allowUnfree = true;
-
   services.qemuGuest.enable = true;
-
-  services.cloud-init.enable = true;
-  services.cloud-init.network.enable = true;
-
+  
+  services.cloud-init = {
+    enable = true;
+    network.enable = true;
+    
+    # Override del cloud.cfg for exclude ssh module
+    config = ''
+      system_info:
+        distro: nixos
+        network:
+          renderers: [ networkd ]
+      
+      disable_root: false
+      preserve_hostname: false
+      
+      # NO tocar host keys ni authorized_keys
+      ssh_deletekeys: false
+      ssh_genkeytypes: []
+      
+      cloud_init_modules:
+        - migrator
+        - seed_random
+        - bootcmd
+        - write-files
+        - growpart
+        - resizefs
+        - update_hostname
+        - resolv_conf
+        - ca-certs
+        - rsyslog
+        - users-groups
+      
+      cloud_config_modules:
+        - disk_setup
+        - mounts
+        - set-passwords
+        - timezone
+        - disable-ec2-metadata
+        - runcmd
+        # ssh y ssh-import-id removed
+      
+      cloud_final_modules:
+        - scripts-vendor
+        - scripts-per-once
+        - scripts-per-boot
+        - scripts-per-instance
+        - scripts-user
+        - phone-home
+        - final-message
+        - power-state-change
+        # ssh-authkey-fingerprints y keys-to-console removed
+      
+      users:
+        - root
+    '';
+  };
+  
   networking.useNetworkd = true;
-
+  
   environment.systemPackages = with pkgs; [
     cloud-utils
   ];

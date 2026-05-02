@@ -12,11 +12,12 @@ provider "proxmox" {
   pm_api_token_id     = var.pm_api_token_id
   pm_api_token_secret = var.pm_api_token_secret
   pm_tls_insecure     = var.pm_tls_insecure
+  pm_timeout          = 1800
 }
 
 resource "proxmox_vm_qemu" "vm1" {
   vmid        = 110
-  name        = "nixos-caddy"
+  name        = "caddy"
   target_node = "pve"
   clone       = "debian-12-template"
   full_clone  = true
@@ -27,7 +28,7 @@ resource "proxmox_vm_qemu" "vm1" {
   scsihw   = "virtio-scsi-single"
   vm_state = var.vm_state
   onboot   = true
-  boot     = "order=virtio0"
+  boot     = "order=scsi0"
 
   cpu {
     cores   = 6
@@ -38,17 +39,15 @@ resource "proxmox_vm_qemu" "vm1" {
   memory = 2048
 
   disks {
-    virtio {
-      virtio0 {
+    scsi {
+      scsi0 {
         disk {
           storage  = "local-lvm"
           size     = "20G"
           iothread = true
         }
       }
-    }
-    scsi {
-      scsi0 {
+      scsi1 {
         cloudinit {
           storage = "local-lvm"
         }
@@ -69,11 +68,15 @@ resource "proxmox_vm_qemu" "vm1" {
   cipassword = var.cipassword
 
   ciupgrade = false
+
+  timeouts {
+    create = "40m"
+  }
 }
 
 resource "proxmox_vm_qemu" "vm2" {
   vmid        = 111
-  name        = "nixos-worker1"
+  name        = "worker1"
   target_node = "pve"
   clone       = "debian-12-template"
   full_clone  = true
@@ -84,7 +87,7 @@ resource "proxmox_vm_qemu" "vm2" {
   scsihw   = "virtio-scsi-single"
   vm_state = var.vm_state
   onboot   = true
-  boot     = "order=virtio0"
+  boot     = "order=scsi0"
 
   cpu {
     cores   = 1
@@ -95,17 +98,15 @@ resource "proxmox_vm_qemu" "vm2" {
   memory = 2048
 
   disks {
-    virtio {
-      virtio0 {
+    scsi {
+      scsi0 {
         disk {
           storage  = "local-lvm"
           size     = "20G"
           iothread = true
         }
       }
-    }
-    scsi {
-      scsi0 {
+      scsi1 {
         cloudinit {
           storage = "local-lvm"
         }
@@ -126,11 +127,15 @@ resource "proxmox_vm_qemu" "vm2" {
   cipassword = var.cipassword
 
   ciupgrade = false
+
+  timeouts {
+    create = "40m"
+  }
 }
 
 resource "proxmox_vm_qemu" "vm3" {
   vmid        = 112
-  name        = "nixos-worker2"
+  name        = "worker2"
   target_node = "pve"
   clone       = "debian-12-template"
   full_clone  = true
@@ -141,7 +146,7 @@ resource "proxmox_vm_qemu" "vm3" {
   scsihw   = "virtio-scsi-single"
   vm_state = var.vm_state
   onboot   = true
-  boot     = "order=virtio0"
+  boot     = "order=scsi0"
 
   cpu {
     cores   = 1
@@ -152,17 +157,15 @@ resource "proxmox_vm_qemu" "vm3" {
   memory = 2048
 
   disks {
-    virtio {
-      virtio0 {
+    scsi {
+      scsi0 {
         disk {
           storage  = "local-lvm"
           size     = "20G"
           iothread = true
         }
       }
-    }
-    scsi {
-      scsi0 {
+      scsi1 {
         cloudinit {
           storage = "local-lvm"
         }
@@ -183,11 +186,15 @@ resource "proxmox_vm_qemu" "vm3" {
   cipassword = var.cipassword
 
   ciupgrade = false
+
+  timeouts {
+    create = "40m"
+  }
 }
 
 resource "proxmox_vm_qemu" "vm4" {
   vmid        = 113
-  name        = "nixos-worker3"
+  name        = "worker3"
   target_node = "pve"
   clone       = "debian-12-template"
   full_clone  = true
@@ -198,7 +205,7 @@ resource "proxmox_vm_qemu" "vm4" {
   scsihw   = "virtio-scsi-single"
   vm_state = var.vm_state
   onboot   = true
-  boot     = "order=virtio0"
+  boot     = "order=scsi0"
 
   cpu {
     cores   = 1
@@ -209,17 +216,15 @@ resource "proxmox_vm_qemu" "vm4" {
   memory = 2048
 
   disks {
-    virtio {
-      virtio0 {
+    scsi {
+      scsi0 {
         disk {
           storage  = "local-lvm"
           size     = "20G"
           iothread = true
         }
       }
-    }
-    scsi {
-      scsi0 {
+      scsi1 {
         cloudinit {
           storage = "local-lvm"
         }
@@ -240,11 +245,15 @@ resource "proxmox_vm_qemu" "vm4" {
   cipassword = var.cipassword
 
   ciupgrade = false
+
+  timeouts {
+    create = "40m"
+  }
 }
 
 resource "proxmox_vm_qemu" "vm5" {
   vmid        = 114
-  name        = "nixos-monitoring"
+  name        = "monitoring"
   target_node = "pve"
   clone       = "debian-12-template"
   full_clone  = true
@@ -255,7 +264,7 @@ resource "proxmox_vm_qemu" "vm5" {
   scsihw   = "virtio-scsi-single"
   vm_state = var.vm_state
   onboot   = true
-  boot     = "order=virtio0"
+  boot     = "order=scsi0"
 
   cpu {
     cores   = 2
@@ -266,17 +275,15 @@ resource "proxmox_vm_qemu" "vm5" {
   memory = 4092
 
   disks {
-    virtio {
-      virtio0 {
+    scsi {
+      scsi0 {
         disk {
           storage  = "local-lvm"
           size     = "20G"
           iothread = true
         }
       }
-    }
-    scsi {
-      scsi0 {
+      scsi1 {
         cloudinit {
           storage = "local-lvm"
         }
@@ -297,4 +304,8 @@ resource "proxmox_vm_qemu" "vm5" {
   cipassword = var.cipassword
 
   ciupgrade = false
+
+  timeouts {
+    create = "40m"
+  }
 }

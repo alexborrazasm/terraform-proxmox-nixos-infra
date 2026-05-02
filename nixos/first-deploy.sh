@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# Comprobamos que se ha pasado el argumento para la llave SSH
+# Check that SSH key argument was provided
 if [ -z "$1" ]; then
-  echo "Uso: $0 <path_a_la_llave_ssh>"
+  echo "Usage: $0 <path_to_ssh_key>"
   exit 1
 fi
 
 ssh_key=$1
 
-# Lista de hosts a iterar
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# List of hosts to iterate
 hosts=("caddy" "worker1" "worker2" "worker3" "monitoring")
 
 for host in "${hosts[@]}"; do
-  # Asignamos la IP según el nombre
+  # Assign IP based on host name
   case $host in
   "caddy") ip_suffix="10" ;;
   "worker1") ip_suffix="11" ;;
@@ -22,11 +25,8 @@ for host in "${hosts[@]}"; do
   esac
 
   echo "----------------------------------------------------"
-  echo "🚀 Desplegando $host en 10.60.60.$ip_suffix"
+  echo "Deploying $host at 10.60.60.$ip_suffix"
   echo "----------------------------------------------------"
 
-  nix run github:nix-community/nixos-anywhere -- \
-    --flake ".#$host" \
-    "template@10.60.60.$ip_suffix" \
-    -i "$ssh_key"
+  bash "${SCRIPT_DIR}/deploy-new-host.sh" "$host" "debian@10.60.60.$ip_suffix" "$ssh_key"
 done

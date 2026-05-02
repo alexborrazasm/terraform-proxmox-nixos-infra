@@ -17,7 +17,6 @@
 
 	@grafana host grafana.mariolamasangeriz.net
 	handle @grafana {
-    redir / /d/virtual-infra-v1/virtual-infrastructure?kiosk
 		reverse_proxy http://10.60.60.14:3000
 	}
 

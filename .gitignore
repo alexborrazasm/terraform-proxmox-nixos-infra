@@ -6,3 +6,4 @@ terraform.tfstate.backup
 **.log
 **.out
 **.toc
+/nixos/hostkeys/*

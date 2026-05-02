@@ -23,6 +23,8 @@
     ];
   };
   systemd.services."docker-cf_ddns" = {
+    after = [ "network-online.target" "docker.service" ];
+    requires = [ "network-online.target" "docker.service" ];
     serviceConfig = {
       Restart = lib.mkOverride 90 "always";
       RestartMaxDelaySec = lib.mkOverride 90 "1m";
