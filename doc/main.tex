@@ -410,7 +410,7 @@ Esta arquitectura permite visualizar en tiempo real el estado de toda la granja 
 \begin{itemize}
     \item \textbf{Curva de aprendizaje}: El ecosistema Nix (Flakes, lenguaje Nix) tiene una curva de aprendizaje pronunciada comparado con métodos tradicionales de administración.
     \item \textbf{Calidad del Provider}: El proveedor de Proxmox para OpenTofu/Terraform presenta limitaciones en la gestión de estados complejos. En ocasiones, cambios menores en la configuración de hardware provocan largas esperas para que las VM's vuelvan a estar disponibles, esto es acendutado por el hardware que empleamos (los discos duros y controladora principalmente).
-    \item \textbf{Automatización incompleta}: No hemos logrado una ``automatización de un solo clic'' (\textit{full automation}) total; todavía se requiere la creación manual de la API Key en la interfaz de Proxmox y la captura manual del \texttt{hardware-configuration.nix} antes del primer despliegue.
+    \item \textbf{Automatización incompleta}: No hemos logrado una ``automatización de un solo clic'' (\textit{full automation}) total; todavía se requiere la creación manual de la API Key en la interfaz de Proxmox y la captura manual del \texttt{hardware-configuration.nix} antes del primer despliegue, además es necesario realizar la configuración (paso) de clave de ssh para agenix de forma manual (por ahora).
 \end{itemize}
 
 \end{document}
