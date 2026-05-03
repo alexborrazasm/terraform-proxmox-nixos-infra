@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Check that SSH key argument was provided
-if [ -z "$1" ]; then
+if [ -z "${1:-}" ]; then
   echo "Usage: $0 <path_to_ssh_key>"
   exit 1
 fi
