@@ -23,6 +23,9 @@
     citecolor=linkblue,
     pdfdisplaydoctitle=true,
 ]{hyperref}
+\usepackage{csquotes}
+\usepackage[backend=bibtex, style=numeric, sorting=none]{biblatex}
+\addbibresource{refs.bib}
 
 \begin{document}
 
@@ -48,30 +51,41 @@
 
 \section{Propuesta}
 
-Aprender más sobre \textbf{Infrastructure as Code} (\textbf{IaC}) usando herramientas como \textbf{OpenTofu} que permite describir y desplegar infraestructura (máquinas virtuales, redes, almacenamiento, etc.) de forma declarativa, mientras que \textbf{NixOS} (tenemos experiencia previa) proporciona un sistema operativo completamente reproducible cuya configuración también se define mediante código.
+Aprender más sobre \textbf{Infrastructure as Code} (\textbf{IaC}) usando herramientas
+como \textbf{Terraform}~\cite{terraform} o \textbf{OpenTofu}~\cite{opentofu} que permite describir y desplegar
+infraestructura de forma declarativa, mientras que \textbf{NixOS}~\cite{nixos} proporciona un
+sistema operativo completamente reproducible cuya configuración también se define
+mediante código.
 
-Este trabajo propone explorar la integración de ambas tecnologías para crear una infraestructura completamente declarativa, donde tanto la creación de recursos como la configuración del sistema operativo estén definidas en repositorios versionados (\href{https://github.com/alexborrazasm/terraform-proxmox-nixos-infra}{\texttt{git}}).
+Este trabajo propone explorar la integración de ambas tecnologías para crear una 
+infraestructura completamente declarativa, donde tanto la creación de recursos 
+como la configuración del sistema operativo estén definidas en repositorios 
+versionados (\href{https://github.com/alexborrazasm/terraform-proxmox-nixos-infra}{\texttt{github}}).
 
 \section{Objetivos}
 
-El objetivo principal del trabajo es diseñar e implementar una plataforma de infraestructura reproducible basada en principios de \textbf{Infrastructure as Code}.
+El objetivo principal del trabajo es diseñar e implementar una plataforma de 
+infraestructura reproducible basada en principios de \textbf{Infrastructure as Code}.
 
 \begin{itemize} 
   \item Estudiar el paradigma de infraestructura declarativa.
-  \item Analizar el funcionamiento de \textbf{OpenTofu} para la provisión de recursos.
-  \item Analizar el modelo de configuración declarativa de \textbf{NixOS}.
-  \item Diseñar una arquitectura donde \textbf{OpenTofu} gestione la infraestructura y \textbf{NixOS} configure los sistemas.
-  \item Implementar un entorno reproducible donde la infraestructura pueda desplegarse automáticamente a partir del código.
+  \item Analizar el funcionamiento de \textbf{Terraform}~\cite{terraform} y \textbf{OpenTofu}~\cite{opentofu} para la provisión de recursos.
+  \item Analizar el modelo de configuración declarativa de \textbf{NixOS}~\cite{nixos}.
+  \item Diseñar una arquitectura donde \textbf{Terraform}~\cite{terraform} o \textbf{OpenTofu}~\cite{opentofu} gestione
+    la infraestructura y \textbf{NixOS}~\cite{nixos} configure los sistemas.
+  \item Implementar un entorno reproducible donde la infraestructura pueda desplegarse 
+    automáticamente a partir del código.
   \item Evaluar las ventajas y limitaciones del enfoque propuesto.
 \end{itemize} 
 
 \section{Hardware empleado}
 
-Para la realización del proyecto contamos con un servidor rack \textbf{Dell} cedido por un amigo, cuyas especificaciones técnicas relevantes para el proyecto son las siguientes:
+Para la realización del proyecto contamos con un servidor rack \textbf{Dell} cedido 
+por un amigo, cuyas especificaciones técnicas relevantes para el proyecto son las siguientes:
 
 \begin{itemize}
     \item \textbf{CPU}: Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} E5-2420 v2 @ 2.20GHz --- 12 cores (1 socket)
-    \item \textbf{RAM}: 31.28 GiB
+    \item \textbf{RAM}: 32 GiB
     \item \textbf{Almacenamiento}: 6 discos duros extraíbles \textit{hot-swappable} de 136 GB cada uno, configurados en \textbf{RAID 1+0}.
 \end{itemize}
 
@@ -80,13 +94,21 @@ Para la realización del proyecto contamos con un servidor rack \textbf{Dell} ce
 Para la realización del proyecto decidimos emplear las siguientes tecnologías:
 
 \begin{itemize}
-  \item \textbf{Proxmox VE}: plataforma de virtualización open-source que utilizamos como hipervisor para la gestión de nuestras máquinas virtuales.
-  \item \textbf{OpenTofu}: fork de Terraform open-source, herramienta de IaC que empleamos para la delcaración y asiagnación de recursos de nuestras máquinas virtuales.
-  \item \textbf{NixOS}: distribución de Linux que emplea el gestor de paquetes Nix, gracias a su configuración delcarativa nos permite desplegar en las máquinas virtuales todo tipo de servicios de forma sencilla y automatizada.
-  \item \textbf{nixos-anywhere}: herramienta de instalación de NixOS, nos permite realizar la instalación del SO de forma remota mediante \texttt{ssh} y de forma completamente automatizada.
-  \item \textbf{Colmena}: tras la primer build de los sistemas de NixOS Colmena nos permite realizar cambios sobre el SO (mientras este se ejecuta) de forma remota y sencilla sin falta de reinstalar.
-  \item \textbf{agenix}: paquete que permite la gestion de secretos mediante encriptación \href{https://github.com/FiloSottile/age}{\texttt{age}}, de esta forma podemos mantener registro de claves y compartirlas entre máquinas sin miedo a exponernos.
-  \item \textbf{Docker}: mediante la configuración en NixOS, podemos desplegar servicios sobre Docker en boot lanzandolos de forma automatizada.
+  \item \textbf{Proxmox VE}~\cite{proxmox}: plataforma de virtualización open-source que utilizamos como
+    hipervisor para la gestión de nuestras máquinas virtuales.
+  \item \textbf{OpenTofu}~\cite{opentofu}: fork de Terraform open-source (sus ficheros de configuración son compatibles),
+    herramienta de IaC que empleamos para la delcaración y asiagnación de recursos de nuestras máquinas virtuales.
+  \item \textbf{NixOS}~\cite{nixos}: distribución de Linux que emplea el gestor de paquetes Nix, gracias a su configuración
+    delcarativa nos permite desplegar en las máquinas virtuales todo tipo de servicios de forma sencilla y automatizada.
+  \item \textbf{nixos-anywhere}~\cite{nixos-anywhere}: herramienta de instalación de NixOS, nos permite realizar la instalación del SO
+    de forma remota mediante \texttt{ssh} y de forma completamente automatizada.
+  \item \textbf{Colmena}~\cite{colmena}: tras la primer build de los sistemas de NixOS Colmena nos permite realizar cambios sobre
+    el SO (mientras este se ejecuta) de forma remota y sencilla sin falta de reinstalar.
+  \item \textbf{agenix}~\cite{agenix}: paquete que permite la gestion de secretos mediante encriptación
+    \texttt{age}~\cite{age}, de esta forma podemos mantener
+    registro de claves y compartirlas entre máquinas sin miedo a exponernos.
+  \item \textbf{Docker}~\cite{docker}: mediante la configuración en NixOS, podemos desplegar servicios
+    sobre Docker en boot lanzandolos de forma automatizada.
 \end{itemize}
 
 \section{Diagrama de red}
@@ -412,5 +434,9 @@ Esta arquitectura permite visualizar en tiempo real el estado de toda la granja 
     \item \textbf{Calidad del Provider}: El proveedor de Proxmox para OpenTofu/Terraform presenta limitaciones en la gestión de estados complejos. En ocasiones, cambios menores en la configuración de hardware provocan largas esperas para que las VM's vuelvan a estar disponibles, esto es acendutado por el hardware que empleamos (los discos duros y controladora principalmente).
     \item \textbf{Automatización incompleta}: No hemos logrado una ``automatización de un solo clic'' (\textit{full automation}) total; todavía se requiere la creación manual de la API Key en la interfaz de Proxmox y la captura manual del \texttt{hardware-configuration.nix} antes del primer despliegue, además es necesario realizar la configuración (paso) de clave de ssh para agenix de forma manual (por ahora).
 \end{itemize}
+
+\newpage
+
+\printbibliography
 
 \end{document}

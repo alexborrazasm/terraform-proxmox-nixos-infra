@@ -7,3 +7,11 @@ terraform.tfstate.backup
 **.out
 **.toc
 /nixos/hostkeys/*
+main.pdf
+*.fdb_latexmk
+*.fls
+main.synctex.gz
+main.run.xml
+*.blg
+*.bbl
+*.bib
