@@ -14,5 +14,5 @@
     ../../modules/nginx_worker.nix
   ];
 
-  networking.hostName = "worker3";
+  networking.hostName = "nixos-worker3";
 }

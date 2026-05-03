@@ -16,5 +16,5 @@
     ../../modules/prometheus.nix
   ];
 
-  networking.hostName = "monitoring";
+  networking.hostName = "nixos-monitoring";
 }

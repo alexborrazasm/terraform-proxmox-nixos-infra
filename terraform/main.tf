@@ -17,7 +17,7 @@ provider "proxmox" {
 
 resource "proxmox_vm_qemu" "vm1" {
   vmid        = 110
-  name        = "caddy"
+  name        = "nixos-caddy"
   target_node = "pve"
   clone       = "debian-12-template"
   full_clone  = true
@@ -76,7 +76,7 @@ resource "proxmox_vm_qemu" "vm1" {
 
 resource "proxmox_vm_qemu" "vm2" {
   vmid        = 111
-  name        = "worker1"
+  name        = "nixos-worker1"
   target_node = "pve"
   clone       = "debian-12-template"
   full_clone  = true
@@ -135,7 +135,7 @@ resource "proxmox_vm_qemu" "vm2" {
 
 resource "proxmox_vm_qemu" "vm3" {
   vmid        = 112
-  name        = "worker2"
+  name        = "nixos-worker2"
   target_node = "pve"
   clone       = "debian-12-template"
   full_clone  = true
@@ -194,7 +194,7 @@ resource "proxmox_vm_qemu" "vm3" {
 
 resource "proxmox_vm_qemu" "vm4" {
   vmid        = 113
-  name        = "worker3"
+  name        = "nixos-worker3"
   target_node = "pve"
   clone       = "debian-12-template"
   full_clone  = true
@@ -253,7 +253,7 @@ resource "proxmox_vm_qemu" "vm4" {
 
 resource "proxmox_vm_qemu" "vm5" {
   vmid        = 114
-  name        = "monitoring"
+  name        = "nixos-monitoring"
   target_node = "pve"
   clone       = "debian-12-template"
   full_clone  = true

@@ -6,9 +6,9 @@
 }:
 let
   indexFiles = {
-    "worker1" = ./nginx-indexes/index1.html;
-    "worker2" = ./nginx-indexes/index2.html;
-    "worker3" = ./nginx-indexes/index3.html;
+    "nixos-worker1" = ./nginx-indexes/index1.html;
+    "nixos-worker2" = ./nginx-indexes/index2.html;
+    "nixos-worker3" = ./nginx-indexes/index3.html;
   };
 
   webRoot = pkgs.runCommand "worker-webroot" {} ''

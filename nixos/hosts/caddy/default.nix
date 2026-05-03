@@ -16,7 +16,7 @@
     ../../modules/caddy.nix
   ];
 
-  networking.hostName = "caddy";
+  networking.hostName = "nixos-caddy";
 
   age.secrets.cf-token = {
       file = ../../secrets/cf-token.age;
