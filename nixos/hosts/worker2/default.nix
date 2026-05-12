@@ -12,6 +12,7 @@
     ../../modules/node_exporter.nix
     ../../modules/common.nix
     ../../modules/nginx_worker.nix
+    ../../modules/docker.nix
   ];
 
   networking.hostName = "nixos-worker2";
