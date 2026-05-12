@@ -7,6 +7,7 @@ terraform.tfstate.backup
 **.out
 **.toc
 /nixos/hostkeys/*
+!/nixos/hostkeys/README.md
 *.fdb_latexmk
 *.fls
 main.synctex.gz

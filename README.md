@@ -419,9 +419,9 @@ in
 }
 ```
 
-Retrieve a host's public key with:
+Retrieve a host's pre-generated public key with:
 ```bash
-ssh root@<host-ip> "cat /etc/ssh/ssh_host_ed25519_key.pub"
+cat nixos/hostkeys/<host>/etc/ssh/ssh_host_ed25519_key.pub
 ```
 
 ### Creating or editing a secret
