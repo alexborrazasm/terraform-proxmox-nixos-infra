@@ -154,7 +154,7 @@ them from a Debian 12 Cloud-init template.
 
 > **Video demo — `tofu apply`** *(×10 speed-up — disk I/O on spinning HDDs makes provisioning slow)*
 >
-> <video src="doc/videos/terraform.mp4" controls width="100%"></video>
+> [Download demo video](doc/videos/terraform.mp4)
 
 ```bash
 cd terraform
@@ -214,7 +214,7 @@ cd nixos
 
 > **Video demo — nixos-anywhere first deploy** *(×4 speed-up)*
 >
-> <video src="doc/videos/nix.mp4" controls width="100%"></video>
+> [Download demo video](doc/videos/nix.mp4)
 
 > **Note:** After the reboot the host key changes (no longer the Debian template).
 > Clear the stale entry from known_hosts:
