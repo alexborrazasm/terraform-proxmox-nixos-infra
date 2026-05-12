@@ -6,7 +6,7 @@
     enable = true;
     network.enable = true;
     
-    # Override del cloud.cfg for exclude ssh module
+    # Override cloud.cfg for exclude ssh module
     config = ''
       system_info:
         distro: nixos
